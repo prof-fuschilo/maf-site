@@ -1,17 +1,39 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { SectionHeading, Reveal } from "./SectionHeading";
 import { useLanguage } from "../context/LanguageContext";
 import { TEAM } from "../i18n/content";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
 import { GraduationCap, ExternalLink, Linkedin, BadgeCheck } from "lucide-react";
 
+const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+
 function initials(name) {
   return name.replace(/^Prof[a]?\.\s*(Dr[a]?\.|Me\.)\s*/i, "").split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+}
+
+function Avatar({ member, photo, size = "h-14 w-14", rounded = "rounded-xl", text = "text-lg" }) {
+  if (photo) {
+    return (
+      <img src={photo} alt={member.name} loading="lazy"
+        className={`${size} ${rounded} shrink-0 border border-emerald-500/30 object-cover`} />
+    );
+  }
+  return (
+    <div className={`flex ${size} ${rounded} shrink-0 items-center justify-center border border-emerald-500/30 bg-gradient-to-br from-emerald-500/20 to-sky-500/10 font-display ${text} font-bold text-emerald-300`}>
+      {initials(member.name)}
+    </div>
+  );
 }
 
 export default function Team() {
   const { t, lang } = useLanguage();
   const [sel, setSel] = useState(null);
+  const [photos, setPhotos] = useState({});
+
+  useEffect(() => {
+    axios.get(`${API}/team-photos`).then((r) => setPhotos(r.data.photos || {})).catch(() => {});
+  }, []);
 
   return (
     <section id="team" data-testid="team-section" className="py-24 sm:py-32">
@@ -27,9 +49,7 @@ export default function Team() {
                 className="card-glow group w-full rounded-2xl border border-white/10 bg-[#0D1117] p-6 text-left transition-all duration-200 hover:-translate-y-1 hover:border-emerald-500/35"
               >
                 <div className="flex items-center gap-4">
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/20 to-sky-500/10 font-display text-lg font-bold text-emerald-300">
-                    {initials(m.name)}
-                  </div>
+                  <Avatar member={m} photo={photos[m.id]} />
                   <div>
                     <div className="font-display text-base font-semibold leading-tight text-slate-50">{m.name}</div>
                     <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.18em] text-slate-500">
@@ -58,9 +78,7 @@ export default function Team() {
             <>
               <DialogHeader>
                 <div className="flex items-center gap-4">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/20 to-sky-500/10 font-display text-xl font-bold text-emerald-300">
-                    {initials(sel.name)}
-                  </div>
+                  <Avatar member={sel} photo={photos[sel.id]} size="h-16 w-16" rounded="rounded-2xl" text="text-xl" />
                   <div>
                     <DialogTitle className="font-display text-xl text-slate-50">{sel.name}</DialogTitle>
                     <DialogDescription className="mt-1 text-sm text-slate-400">

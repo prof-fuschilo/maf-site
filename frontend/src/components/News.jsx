@@ -30,39 +30,54 @@ export default function News() {
         <SectionHeading kicker={t.news.kicker} title={t.news.title} em={t.news.title_em} />
 
         <Reveal>
-          <article data-testid="news-featured-card" className="card-glow mb-6 overflow-hidden rounded-2xl border border-emerald-500/25 bg-gradient-to-br from-[#0D1117] to-[#0D1A14] p-8 sm:p-10">
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="flex items-center gap-1.5 rounded-full bg-emerald-500 px-3 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-emerald-950">
-                <Sparkles size={10} /> {t.news.featured}
-              </span>
-              <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-slate-500">{featured.tag}</span>
-              <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.18em] text-slate-500">
-                <CalendarDays size={11} /> {fmt(featured.date)}
-              </span>
+          <article data-testid="news-featured-card" className="card-glow mb-6 overflow-hidden rounded-2xl border border-emerald-500/25 bg-gradient-to-br from-[#0D1117] to-[#0D1A14]">
+            {featured.image_url && (
+              <div className="relative h-56 overflow-hidden sm:h-72">
+                <img src={featured.image_url} alt="" className="h-full w-full object-cover" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0D1117] via-[#0D1117]/40 to-transparent" />
+              </div>
+            )}
+            <div className="p-8 pt-6 sm:p-10 sm:pt-6">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="flex items-center gap-1.5 rounded-full bg-emerald-500 px-3 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-emerald-950">
+                  <Sparkles size={10} /> {t.news.featured}
+                </span>
+                <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-slate-500">{featured.tag}</span>
+                <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.18em] text-slate-500">
+                  <CalendarDays size={11} /> {fmt(featured.date)}
+                </span>
+              </div>
+              <h3 className="mt-5 max-w-3xl font-display text-xl font-semibold leading-snug text-slate-50 sm:text-2xl">
+                {lang === "pt" ? featured.title_pt : featured.title_en}
+              </h3>
+              <p className="mt-4 max-w-3xl text-sm leading-relaxed text-slate-400 sm:text-base">
+                {lang === "pt" ? featured.summary_pt : featured.summary_en}
+              </p>
             </div>
-            <h3 className="mt-5 max-w-3xl font-display text-xl font-semibold leading-snug text-slate-50 sm:text-2xl">
-              {lang === "pt" ? featured.title_pt : featured.title_en}
-            </h3>
-            <p className="mt-4 max-w-3xl text-sm leading-relaxed text-slate-400 sm:text-base">
-              {lang === "pt" ? featured.summary_pt : featured.summary_en}
-            </p>
           </article>
         </Reveal>
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
           {rest.slice(0, 3).map((n, i) => (
             <Reveal key={n.id} delay={i * 0.08}>
-              <article data-testid="news-item-card" className="card-glow h-full rounded-2xl border border-white/10 bg-[#0D1117] p-6 transition-colors duration-200 hover:border-emerald-500/30">
-                <div className="flex items-center gap-3">
-                  <span className="rounded-full border border-white/15 px-2.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-slate-400">{n.tag}</span>
-                  <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-slate-500">{fmt(n.date)}</span>
+              <article data-testid="news-item-card" className="card-glow h-full overflow-hidden rounded-2xl border border-white/10 bg-[#0D1117] transition-colors duration-200 hover:border-emerald-500/30">
+                {n.image_url && (
+                  <div className="h-36 overflow-hidden">
+                    <img src={n.image_url} alt="" className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" loading="lazy" />
+                  </div>
+                )}
+                <div className="p-6">
+                  <div className="flex items-center gap-3">
+                    <span className="rounded-full border border-white/15 px-2.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-slate-400">{n.tag}</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-slate-500">{fmt(n.date)}</span>
+                  </div>
+                  <h4 className="mt-4 font-display text-base font-semibold leading-snug text-slate-100">
+                    {lang === "pt" ? n.title_pt : n.title_en}
+                  </h4>
+                  <p className="mt-3 text-sm leading-relaxed text-slate-400">
+                    {lang === "pt" ? n.summary_pt : n.summary_en}
+                  </p>
                 </div>
-                <h4 className="mt-4 font-display text-base font-semibold leading-snug text-slate-100">
-                  {lang === "pt" ? n.title_pt : n.title_en}
-                </h4>
-                <p className="mt-3 text-sm leading-relaxed text-slate-400">
-                  {lang === "pt" ? n.summary_pt : n.summary_en}
-                </p>
               </article>
             </Reveal>
           ))}

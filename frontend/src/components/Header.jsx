@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, LockKeyhole } from "lucide-react";
+import { Menu, X, LockKeyhole, FlaskConical } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { LogoMark } from "./LogoMark";
 
@@ -61,6 +61,14 @@ export default function Header() {
               {t.nav[key]}
             </button>
           ))}
+          <Link
+            to="/simulacao"
+            data-testid="nav-simulation-link"
+            className="flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.16em] text-emerald-400 transition-colors duration-200 hover:bg-emerald-500/20"
+          >
+            <FlaskConical size={11} />
+            {t.nav.simulation}
+          </Link>
         </nav>
 
         <div className="flex items-center gap-2">
@@ -105,6 +113,9 @@ export default function Header() {
                 {t.nav[key]}
               </button>
             ))}
+            <Link to="/simulacao" onClick={() => setOpen(false)} className="py-2 font-mono text-xs uppercase tracking-[0.18em] text-emerald-400" data-testid="nav-mobile-simulation-link">
+              {t.nav.simulation}
+            </Link>
             <Link to="/admin/login" className="py-2 font-mono text-xs uppercase tracking-[0.18em] text-emerald-400" data-testid="nav-mobile-admin-link">
               {t.nav.admin}
             </Link>

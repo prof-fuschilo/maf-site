@@ -3,11 +3,12 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
 import { LogoMark } from "../components/LogoMark";
+import { TEAM } from "../i18n/content";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog";
-import { Plus, Pencil, Trash2, LogOut, Newspaper, BookOpen, Inbox, LayoutDashboard } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, Newspaper, BookOpen, Inbox, LayoutDashboard, Users } from "lucide-react";
 import { toast } from "sonner";
 
-const EMPTY_NEWS = { title_pt: "", title_en: "", summary_pt: "", summary_en: "", date: new Date().toISOString().slice(0, 10), tag: "LAB", featured: false };
+const EMPTY_NEWS = { title_pt: "", title_en: "", summary_pt: "", summary_en: "", date: new Date().toISOString().slice(0, 10), tag: "LAB", featured: false, image_url: "" };
 const EMPTY_PUB = { title: "", authors: "", venue: "", year: new Date().getFullYear(), tags: "", url: "", kind: "article" };
 
 export default function AdminDashboard() {
@@ -18,6 +19,8 @@ export default function AdminDashboard() {
   const [news, setNews] = useState([]);
   const [pubs, setPubs] = useState([]);
   const [msgs, setMsgs] = useState([]);
+  const [photos, setPhotos] = useState({});
+  const [photoDrafts, setPhotoDrafts] = useState({});
   const [newsForm, setNewsForm] = useState(null);
   const [pubForm, setPubForm] = useState(null);
 
@@ -28,12 +31,17 @@ export default function AdminDashboard() {
     ax({ url: `${api}/news` }).then((r) => setNews(r.data)).catch(() => {});
     ax({ url: `${api}/publications` }).then((r) => setPubs(r.data)).catch(() => {});
     ax({ url: `${api}/contact` }).then((r) => setMsgs(r.data)).catch(() => {});
+    axios.get(`${api}/team-photos`).then((r) => {
+      setPhotos(r.data.photos || {});
+      setPhotoDrafts(r.data.photos || {});
+    }).catch(() => {});
   };
 
   useEffect(load, [api]);
 
   const saveNews = async () => {
     const { id, ...payload } = newsForm;
+    payload.image_url = payload.image_url || null;
     try {
       if (id) await ax({ method: "put", url: `${api}/news/${id}`, data: payload });
       else await ax({ method: "post", url: `${api}/news`, data: payload });
@@ -59,6 +67,13 @@ export default function AdminDashboard() {
     } catch { toast.error("Erro / Error"); }
   };
 
+  const savePhoto = async (memberId) => {
+    try {
+      await ax({ method: "put", url: `${api}/team-photos/${memberId}`, data: { url: photoDrafts[memberId] || null } });
+      toast.success(t.admin.saved); load();
+    } catch { toast.error("Erro / Error"); }
+  };
+
   const inputCls = "w-full rounded-lg border border-white/10 bg-[#07090E] px-3 py-2 text-sm text-slate-200 outline-none focus:border-emerald-500/50";
   const labelCls = "mb-1 block font-mono text-[9px] uppercase tracking-[0.18em] text-slate-500";
 
@@ -66,6 +81,7 @@ export default function AdminDashboard() {
     ["news", Newspaper, t.admin.tab_news],
     ["pubs", BookOpen, t.admin.tab_pubs],
     ["msgs", Inbox, t.admin.tab_msgs],
+    ["equipe", Users, t.admin.tab_team],
   ];
 
   return (
@@ -97,7 +113,7 @@ export default function AdminDashboard() {
         </div>
 
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {tabs.map(([id, Icon, label]) => (
               <button key={id} data-testid={`admin-tab-${id}`} onClick={() => setTab(id)}
                 className={`flex items-center gap-2 rounded-full px-4 py-2 font-mono text-[10px] uppercase tracking-widest transition-colors duration-200 ${
@@ -125,12 +141,13 @@ export default function AdminDashboard() {
           <div className="space-y-2" data-testid="admin-news-list">
             {news.map((n) => (
               <div key={n.id} className="flex flex-col gap-3 rounded-xl border border-white/10 bg-[#0D1117] p-4 sm:flex-row sm:items-center">
+                {n.image_url && <img src={n.image_url} alt="" className="h-12 w-16 shrink-0 rounded-lg border border-white/10 object-cover" />}
                 <div className="flex-1">
                   <div className="text-sm font-medium text-slate-100">{n.title_pt}</div>
                   <div className="mt-1 font-mono text-[9px] uppercase tracking-wider text-slate-500">{n.date} · {n.tag} {n.featured && "· ★"}</div>
                 </div>
                 <div className="flex gap-2">
-                  <button data-testid="admin-edit-news-button" onClick={() => setNewsForm({ ...n })}
+                  <button data-testid="admin-edit-news-button" onClick={() => setNewsForm({ ...n, image_url: n.image_url || "" })}
                     className="flex items-center gap-1 rounded-lg border border-white/15 px-3 py-1.5 font-mono text-[10px] uppercase text-slate-300 hover:border-emerald-500/50 hover:text-emerald-400">
                     <Pencil size={11} /> {t.admin.edit}
                   </button>
@@ -188,6 +205,34 @@ export default function AdminDashboard() {
             ))}
           </div>
         )}
+
+        {tab === "equipe" && (
+          <div className="space-y-2" data-testid="admin-team-list">
+            <p className="mb-4 rounded-xl border border-white/10 bg-[#0D1117] p-4 text-xs text-slate-400">{t.admin.photo_hint}</p>
+            {TEAM.map((m) => (
+              <div key={m.id} className="flex flex-col gap-3 rounded-xl border border-white/10 bg-[#0D1117] p-4 sm:flex-row sm:items-center">
+                {photos[m.id]
+                  ? <img src={photos[m.id]} alt={m.name} className="h-12 w-12 shrink-0 rounded-lg border border-emerald-500/30 object-cover" />
+                  : <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5 font-mono text-[10px] text-slate-500">—</div>}
+                <div className="w-full sm:w-64">
+                  <div className="text-sm font-medium text-slate-100">{m.name}</div>
+                  <div className="mt-0.5 font-mono text-[9px] uppercase tracking-wider text-slate-500">{m.institution}</div>
+                </div>
+                <input
+                  data-testid={`admin-photo-input-${m.id}`}
+                  className={inputCls}
+                  placeholder={t.admin.photo_url}
+                  value={photoDrafts[m.id] || ""}
+                  onChange={(e) => setPhotoDrafts({ ...photoDrafts, [m.id]: e.target.value })}
+                />
+                <button data-testid={`admin-photo-save-${m.id}`} onClick={() => savePhoto(m.id)}
+                  className="shrink-0 rounded-lg bg-emerald-500 px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-widest text-emerald-950 hover:bg-emerald-400">
+                  {t.admin.save}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </main>
 
       <Dialog open={!!newsForm} onOpenChange={() => setNewsForm(null)}>
@@ -204,6 +249,11 @@ export default function AdminDashboard() {
                       : <input className={inputCls} value={newsForm[k]} onChange={(e) => setNewsForm({ ...newsForm, [k]: e.target.value })} />}
                   </div>
                 ))}
+                <div>
+                  <label className={labelCls}>{t.admin.image_url}</label>
+                  <input data-testid="admin-news-image-input" className={inputCls} value={newsForm.image_url} onChange={(e) => setNewsForm({ ...newsForm, image_url: e.target.value })} placeholder="https://…" />
+                  {newsForm.image_url && <img src={newsForm.image_url} alt="" className="mt-2 h-28 w-full rounded-lg border border-white/10 object-cover" />}
+                </div>
                 <div className="grid grid-cols-3 gap-3">
                   <div><label className={labelCls}>{t.admin.date}</label>
                     <input type="date" className={inputCls} value={newsForm.date} onChange={(e) => setNewsForm({ ...newsForm, date: e.target.value })} /></div>

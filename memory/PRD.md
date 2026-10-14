@@ -34,7 +34,14 @@ Criar um site completo e navegável do laboratório de pesquisa "Mundos Artifici
 ## Credenciais
 - admin@maf.ufrj.br / MAF-Lab#2026! (ver /app/memory/test_credentials.md)
 
+## Implementado (2026-07-14 — rodada 2)
+- Página dedicada /simulacao: micromercado artificial com sliders (população de agentes 40–400, volatilidade 0.2–2.5×), 5 cenários (Calmo, Bolha, Choque, Pânico, Recuperação) e telemetria ao vivo (preço, variação %, regime)
+- Simulação mais realista: regimes de alta/baixa/lateral que alternam sozinhos, clusters de volatilidade, momentum e reversão à média; fundamentalistas/chartistas/ruído reagem diferente
+- Notícias com imagem de capa (campo image_url no modelo + admin com preview; 4 seeds migradas com imagens curadas)
+- Fotos da equipe: nova aba "Equipe" no admin para colar URL da foto de cada membro; site exibe foto ou iniciais como fallback
+- Alerta de contato por e-mail: pipeline Resend (Emergent) implementado e dormente — aguarda NOTIFY_EMAIL real da coordenação (escolha do usuário); mensagens continuam salvas no painel
+
 ## Backlog
-- P0: nada pendente do escopo aprovado
-- P1: páginas individuais de publicação com DOI/PDF; upload de foto dos membros; feed de notícias com imagem de capa
-- P2: versão pública da simulação como página interativa dedicada; exportar publicações em BibTeX completo; integração com API Lattes; e-mail de notificação do formulário de contato (Resend)
+- P0: informar e-mail real da coordenação para ativar alertas (NOTIFY_EMAIL)
+- P1: páginas individuais de publicação com DOI/PDF; feed de notícias paginado
+- P2: exportar publicações em BibTeX completo; integração com API Lattes; SEO/OG tags

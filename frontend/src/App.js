@@ -4,6 +4,7 @@ import { LanguageProvider } from "./context/LanguageContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { Toaster } from "./components/ui/sonner";
 import Home from "./pages/Home";
+import Simulation from "./pages/Simulation";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 
@@ -27,6 +28,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/simulacao" element={<Simulation />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<Protected><AdminDashboard /></Protected>} />
             <Route path="*" element={<Navigate to="/" replace />} />
