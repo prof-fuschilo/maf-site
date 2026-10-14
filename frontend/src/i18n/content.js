@@ -116,6 +116,7 @@ export const UI = {
       m_education: "Formação (1 por linha)", m_bio_pt: "Bio (PT)", m_bio_en: "Bio (EN)",
       m_highlight_pt: "Destaque (PT)", m_highlight_en: "Destaque (EN)", m_order: "Ordem",
       m_published: "Publicado na página do site",
+      google: "Entrar com Google", google_error: "Esta conta Google não está autorizada no painel.",
     },
   },
   en: {
@@ -235,6 +236,7 @@ export const UI = {
       m_education: "Education (1 per line)", m_bio_pt: "Bio (PT)", m_bio_en: "Bio (EN)",
       m_highlight_pt: "Highlight (PT)", m_highlight_en: "Highlight (EN)", m_order: "Order",
       m_published: "Published on the site page",
+      google: "Sign in with Google", google_error: "This Google account is not authorized for the admin panel.",
     },
   },
 };

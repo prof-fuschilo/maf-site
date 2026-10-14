@@ -19,3 +19,9 @@
 - GET  /api/publications
 - GET  /api/news
 - POST /api/contact
+
+## Google Sign-In (Emergent-managed)
+- Botão "Entrar com Google" na tela /admin/login
+- Allowlist: SOMENTE o e-mail configurado em ADMIN_EMAIL (admin@maf.ufrj.br) é aceito no painel; qualquer outra conta Google recebe 403
+- A sessão Google usa os mesmos cookies JWT (access_token/refresh_token) do login por senha
+- Não há senha gerenciada pelo app para contas Google

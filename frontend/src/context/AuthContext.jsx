@@ -17,6 +17,9 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null); // null = checking, false = logged out
 
   useEffect(() => {
+    // CRITICAL: If returning from OAuth callback, skip the /me check.
+    // AuthCallback will exchange the session_id and establish the session first.
+    if (window.location.hash?.includes("session_id=")) return;
     axios.get(`${API}/auth/me`, { withCredentials: true })
       .then((res) => setUser(res.data))
       .catch(() => setUser(false));
@@ -28,12 +31,18 @@ export function AuthProvider({ children }) {
     return data;
   }, []);
 
+  const googleSession = useCallback(async (sessionId) => {
+    const { data } = await axios.post(`${API}/auth/google`, { session_id: sessionId }, { withCredentials: true });
+    setUser(data);
+    return data;
+  }, []);
+
   const logout = useCallback(async () => {
     try { await axios.post(`${API}/auth/logout`, {}, { withCredentials: true }); } catch (e) { /* noop */ }
     setUser(false);
   }, []);
 
-  return <AuthContext.Provider value={{ user, login, logout, api: API }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, login, googleSession, logout, api: API }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

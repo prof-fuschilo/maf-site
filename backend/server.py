@@ -340,6 +340,39 @@ async def refresh(request: Request, response: Response):
     return user
 
 
+class GoogleSessionIn(BaseModel):
+    session_id: str
+
+
+@api_router.post("/auth/google")
+async def google_auth(input: GoogleSessionIn, response: Response):
+    async with httpx.AsyncClient(timeout=20) as http:
+        r = await http.get(
+            "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+            headers={"X-Session-ID": input.session_id},
+        )
+    if r.status_code != 200:
+        raise HTTPException(status_code=401, detail="Invalid Google session")
+    data = r.json()
+    email = (data.get("email") or "").lower()
+    allowed = os.environ.get("ADMIN_EMAIL", "").lower()
+    if not email or email != allowed:
+        raise HTTPException(status_code=403, detail="This Google account is not authorized for the admin panel")
+    user = await db.users.find_one({"email": email})
+    if not user:
+        user = {
+            "id": str(uuid.uuid4()), "email": email, "name": data.get("name", "Admin"),
+            "picture": data.get("picture"), "role": "admin", "password_hash": None,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
+        await db.users.insert_one(user)
+    else:
+        await db.users.update_one({"email": email},
+                                  {"$set": {"name": data.get("name"), "picture": data.get("picture")}})
+    set_auth_cookies(response, create_access_token(user["id"], email), create_refresh_token(user["id"]))
+    return {"id": user["id"], "email": email, "name": data.get("name", "Admin"), "role": "admin"}
+
+
 # ---------- Publications ----------
 
 @api_router.get("/publications", response_model=List[Publication])

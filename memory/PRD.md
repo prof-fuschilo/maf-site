@@ -42,9 +42,16 @@ Criar um site completo e navegável do laboratório de pesquisa "Mundos Artifici
 - Alerta de contato por e-mail: pipeline Resend (Emergent) implementado e dormente — aguarda NOTIFY_EMAIL real da coordenação (escolha do usuário); mensagens continuam salvas no painel
 
 ## Backlog
+- P0: definir ADMIN_EMAIL com o Gmail real do coordenador para o login Google funcionar com a conta certa (allowlist)
 - P0: informar e-mail real da coordenação para ativar alertas de novo contato (NOTIFY_EMAIL)
 - P1: páginas individuais de publicação com DOI/PDF; feed de notícias paginado
 - P2: exportar publicações em BibTeX completo; integração com API Lattes; SEO/OG tags
+
+## Implementado (2026-07-14 — rodada 4: Google Sign-In)
+- Login com Google (Emergent-managed OAuth) adicionado à tela /admin/login, convivendo com e-mail/senha
+- Fluxo: botão → auth.emergentagent.com (redirect dinâmico via window.location.origin) → callback #session_id → POST /api/auth/google → troca server-side → allowlist (só ADMIN_EMAIL entra; demais contas recebem 403) → cookies JWT httpOnly compartilhados com o login por senha
+- AuthCallback com detecção síncrona de hash + proteção contra race condition no AuthProvider
+- Verificado: session_id inválido → 401; login por senha segue funcionando; botão monta URL OAuth correta. Fluxo completo com conta Google real não testado (requer a conta)
 
 ## Implementado (2026-07-14 — rodada 3: painel admin completo)
 - Notícias e Publicações: toggle Publicada/Rascunho (badge + botão na lista + checkbox no formulário); rotas públicas só exibem itens publicados; rotas /api/admin/* listam tudo
