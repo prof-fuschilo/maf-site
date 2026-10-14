@@ -12,10 +12,10 @@ function initials(name) {
   return name.replace(/^Prof[a]?\.\s*(Dr[a]?\.|Me\.)\s*/i, "").split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 }
 
-function Avatar({ member, photo, size = "h-14 w-14", rounded = "rounded-xl", text = "text-lg" }) {
-  if (photo) {
+function Avatar({ member, size = "h-14 w-14", rounded = "rounded-xl", text = "text-lg" }) {
+  if (member.photo_url) {
     return (
-      <img src={photo} alt={member.name} loading="lazy"
+      <img src={member.photo_url} alt={member.name} loading="lazy"
         className={`${size} ${rounded} shrink-0 border border-emerald-500/30 object-cover`} />
     );
   }
@@ -29,10 +29,12 @@ function Avatar({ member, photo, size = "h-14 w-14", rounded = "rounded-xl", tex
 export default function Team() {
   const { t, lang } = useLanguage();
   const [sel, setSel] = useState(null);
-  const [photos, setPhotos] = useState({});
+  const [members, setMembers] = useState(TEAM);
 
   useEffect(() => {
-    axios.get(`${API}/team-photos`).then((r) => setPhotos(r.data.photos || {})).catch(() => {});
+    axios.get(`${API}/team`).then((r) => {
+      if (Array.isArray(r.data) && r.data.length) setMembers(r.data);
+    }).catch(() => {});
   }, []);
 
   return (
@@ -41,15 +43,15 @@ export default function Team() {
         <SectionHeading kicker={t.team.kicker} title={t.team.title} em={t.team.title_em} sub={t.team.sub} />
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {TEAM.map((m, i) => (
-            <Reveal key={m.id} delay={(i % 3) * 0.08}>
+          {members.map((m, i) => (
+            <Reveal key={m.id || m.name} delay={(i % 3) * 0.08}>
               <button
-                data-testid={`team-member-card-${m.id}`}
+                data-testid={`team-member-card-${(m.name || "").toLowerCase().replace(/[^a-z]+/g, "-").slice(0, 40)}`}
                 onClick={() => setSel(m)}
                 className="card-glow group w-full rounded-2xl border border-white/10 bg-[#0D1117] p-6 text-left transition-all duration-200 hover:-translate-y-1 hover:border-emerald-500/35"
               >
                 <div className="flex items-center gap-4">
-                  <Avatar member={m} photo={photos[m.id]} />
+                  <Avatar member={m} />
                   <div>
                     <div className="font-display text-base font-semibold leading-tight text-slate-50">{m.name}</div>
                     <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.18em] text-slate-500">
@@ -59,7 +61,7 @@ export default function Team() {
                 </div>
                 <p className="mt-4 text-sm text-slate-400">{lang === "pt" ? m.role_pt : m.role_en}</p>
                 <div className="mt-4 flex flex-wrap gap-1.5">
-                  {(lang === "pt" ? m.areas_pt : m.areas_en).slice(0, 3).map((a) => (
+                  {(lang === "pt" ? m.areas_pt : m.areas_en || []).slice(0, 3).map((a) => (
                     <span key={a} className="rounded-md bg-white/5 px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-slate-400">{a}</span>
                   ))}
                 </div>
@@ -78,7 +80,7 @@ export default function Team() {
             <>
               <DialogHeader>
                 <div className="flex items-center gap-4">
-                  <Avatar member={sel} photo={photos[sel.id]} size="h-16 w-16" rounded="rounded-2xl" text="text-xl" />
+                  <Avatar member={sel} size="h-16 w-16" rounded="rounded-2xl" text="text-xl" />
                   <div>
                     <DialogTitle className="font-display text-xl text-slate-50">{sel.name}</DialogTitle>
                     <DialogDescription className="mt-1 text-sm text-slate-400">
@@ -89,24 +91,28 @@ export default function Team() {
               </DialogHeader>
               <div className="mt-2 space-y-6">
                 <p className="text-sm leading-relaxed text-slate-300">{lang === "pt" ? sel.bio_pt : sel.bio_en}</p>
-                <div className="flex items-start gap-3 rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-4">
-                  <BadgeCheck size={16} className="mt-0.5 shrink-0 text-emerald-400" />
-                  <p className="text-sm text-emerald-200/90">{lang === "pt" ? sel.highlight_pt : sel.highlight_en}</p>
-                </div>
-                <div>
-                  <div className="mb-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-emerald-400">
-                    <GraduationCap size={14} /> {t.team.education}
+                {(sel.highlight_pt || sel.highlight_en) && (
+                  <div className="flex items-start gap-3 rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-4">
+                    <BadgeCheck size={16} className="mt-0.5 shrink-0 text-emerald-400" />
+                    <p className="text-sm text-emerald-200/90">{lang === "pt" ? sel.highlight_pt : sel.highlight_en}</p>
                   </div>
-                  <ul className="space-y-1.5">
-                    {sel.education.map((e) => (
-                      <li key={e} className="border-l-2 border-white/10 pl-3 text-sm text-slate-400">{e}</li>
-                    ))}
-                  </ul>
-                </div>
+                )}
+                {!!sel.education?.length && (
+                  <div>
+                    <div className="mb-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-emerald-400">
+                      <GraduationCap size={14} /> {t.team.education}
+                    </div>
+                    <ul className="space-y-1.5">
+                      {sel.education.map((e) => (
+                        <li key={e} className="border-l-2 border-white/10 pl-3 text-sm text-slate-400">{e}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 <div>
                   <div className="mb-3 font-mono text-[10px] uppercase tracking-[0.22em] text-emerald-400">{t.team.areas}</div>
                   <div className="flex flex-wrap gap-1.5">
-                    {(lang === "pt" ? sel.areas_pt : sel.areas_en).map((a) => (
+                    {(lang === "pt" ? sel.areas_pt : sel.areas_en || []).map((a) => (
                       <span key={a} className="rounded-md bg-white/5 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-slate-300">{a}</span>
                     ))}
                   </div>

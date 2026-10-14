@@ -210,6 +210,7 @@ class PublicationIn(BaseModel):
     tags: List[str] = []
     url: Optional[str] = None
     kind: str = "article"
+    published: bool = True
 
 
 class Publication(PublicationIn):
@@ -225,6 +226,7 @@ class NewsIn(BaseModel):
     tag: str = "LAB"
     featured: bool = False
     image_url: Optional[str] = None
+    published: bool = True
 
 
 class News(NewsIn):
@@ -239,8 +241,37 @@ class ContactIn(BaseModel):
     message: str
 
 
-class TeamPhotoIn(BaseModel):
-    url: Optional[str] = None
+class ContactStatusIn(BaseModel):
+    status: str
+
+
+class ReplyIn(BaseModel):
+    text: str
+
+
+class TeamMemberIn(BaseModel):
+    name: str
+    role_pt: str = ""
+    role_en: str = ""
+    institution: str = ""
+    group: str = "ufrj"
+    areas_pt: List[str] = []
+    areas_en: List[str] = []
+    education: List[str] = []
+    bio_pt: str = ""
+    bio_en: str = ""
+    highlight_pt: str = ""
+    highlight_en: str = ""
+    lattes: Optional[str] = None
+    orcid: Optional[str] = None
+    linkedin: Optional[str] = None
+    photo_url: Optional[str] = None
+    published: bool = True
+    order: int = 0
+
+
+class TeamMember(TeamMemberIn):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
 
 
 # ---------- Auth ----------
@@ -313,6 +344,11 @@ async def refresh(request: Request, response: Response):
 
 @api_router.get("/publications", response_model=List[Publication])
 async def list_publications():
+    return await db.publications.find({"published": {"$ne": False}}, {"_id": 0}).sort("year", -1).to_list(500)
+
+
+@api_router.get("/admin/publications", response_model=List[Publication])
+async def admin_list_publications(user: dict = Depends(get_current_user)):
     return await db.publications.find({}, {"_id": 0}).sort("year", -1).to_list(500)
 
 
@@ -344,6 +380,11 @@ async def delete_publication(pub_id: str, user: dict = Depends(get_current_user)
 
 @api_router.get("/news", response_model=List[News])
 async def list_news():
+    return await db.news.find({"published": {"$ne": False}}, {"_id": 0}).sort("date", -1).to_list(200)
+
+
+@api_router.get("/admin/news", response_model=List[News])
+async def admin_list_news(user: dict = Depends(get_current_user)):
     return await db.news.find({}, {"_id": 0}).sort("date", -1).to_list(200)
 
 
@@ -371,21 +412,39 @@ async def delete_news(news_id: str, user: dict = Depends(get_current_user)):
     return {"ok": True}
 
 
-# ---------- Team photos ----------
+# ---------- Team ----------
 
-@api_router.get("/team-photos")
-async def get_team_photos():
-    docs = await db.team_photos.find({}, {"_id": 0}).to_list(100)
-    return {"photos": {d["member"]: d["url"] for d in docs if d.get("url")}}
+@api_router.get("/team", response_model=List[TeamMember])
+async def list_team():
+    return await db.team_members.find({"published": {"$ne": False}}, {"_id": 0}).sort("order", 1).to_list(100)
 
 
-@api_router.put("/team-photos/{member_id}")
-async def set_team_photo(member_id: str, input: TeamPhotoIn, user: dict = Depends(get_current_user)):
-    await db.team_photos.update_one(
-        {"member": member_id},
-        {"$set": {"member": member_id, "url": input.url}},
-        upsert=True,
-    )
+@api_router.get("/admin/team", response_model=List[TeamMember])
+async def admin_list_team(user: dict = Depends(get_current_user)):
+    return await db.team_members.find({}, {"_id": 0}).sort("order", 1).to_list(100)
+
+
+@api_router.post("/team", response_model=TeamMember)
+async def create_team_member(input: TeamMemberIn, user: dict = Depends(get_current_user)):
+    member = TeamMember(**input.model_dump())
+    await db.team_members.insert_one(member.model_dump())
+    return member
+
+
+@api_router.put("/team/{member_id}", response_model=TeamMember)
+async def update_team_member(member_id: str, input: TeamMemberIn, user: dict = Depends(get_current_user)):
+    res = await db.team_members.update_one({"id": member_id}, {"$set": input.model_dump()})
+    if res.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Team member not found")
+    doc = await db.team_members.find_one({"id": member_id}, {"_id": 0})
+    return TeamMember(**doc)
+
+
+@api_router.delete("/team/{member_id}")
+async def delete_team_member(member_id: str, user: dict = Depends(get_current_user)):
+    res = await db.team_members.delete_one({"id": member_id})
+    if res.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Team member not found")
     return {"ok": True}
 
 
@@ -410,10 +469,29 @@ def contact_email_html(input: ContactIn) -> str:
     )
 
 
+def reply_email_html(msg: dict, text: str) -> str:
+    row = "padding:6px 0;font-size:14px;color:#e2e8f0"
+    label = "font-family:monospace;font-size:11px;color:#10b981;text-transform:uppercase;letter-spacing:2px"
+    return (
+        '<table role="presentation" width="100%" style="background:#07090e;padding:32px 0"><tr><td align="center">'
+        '<table role="presentation" width="560" style="background:#0d1117;border:1px solid rgba(255,255,255,0.1);'
+        'border-radius:12px;padding:28px;font-family:Arial,sans-serif">'
+        f'<tr><td style="{label}">MAF · Mundos Artificiais em Finanças</td></tr>'
+        f'<tr><td style="padding:10px 0 16px;font-size:20px;font-weight:bold;color:#f8fafc">Olá, {escape(msg.get("name", ""))}!</td></tr>'
+        f'<tr><td style="{row};white-space:pre-wrap">{escape(text)}</td></tr>'
+        f'<tr><td style="padding:18px 0 6px;font-size:12px;color:#64748b">Em referência à sua mensagem: '
+        f'<em style="color:#94a3b8">{escape(msg.get("subject", ""))}</em></td></tr>'
+        f'<tr><td style="padding-top:16px;font-size:11px;color:#64748b">{escape(EMAIL_FROM_NAME)} · UFRJ/PPGI · CEFET/RJ — '
+        'nunca pedimos senhas ou dados de pagamento por e-mail.</td></tr>'
+        "</table></td></tr></table>"
+    )
+
+
 @api_router.post("/contact")
 async def send_contact(input: ContactIn):
     doc = input.model_dump()
     doc["id"] = str(uuid.uuid4())
+    doc["status"] = "new"
     doc["created_at"] = datetime.now(timezone.utc).isoformat()
     await db.contacts.insert_one(doc)
     if NOTIFY_EMAIL and EMAIL_KEY:
@@ -431,6 +509,44 @@ async def send_contact(input: ContactIn):
 @api_router.get("/contact")
 async def list_contacts(user: dict = Depends(get_current_user)):
     return await db.contacts.find({}, {"_id": 0}).sort("created_at", -1).to_list(200)
+
+
+@api_router.patch("/contact/{msg_id}")
+async def set_contact_status(msg_id: str, input: ContactStatusIn, user: dict = Depends(get_current_user)):
+    if input.status not in ("new", "replied"):
+        raise HTTPException(status_code=400, detail="Invalid status")
+    res = await db.contacts.update_one({"id": msg_id}, {"$set": {"status": input.status}})
+    if res.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Message not found")
+    return {"ok": True}
+
+
+@api_router.post("/contact/{msg_id}/reply")
+async def reply_contact(msg_id: str, input: ReplyIn, user: dict = Depends(get_current_user)):
+    msg = await db.contacts.find_one({"id": msg_id}, {"_id": 0})
+    if not msg:
+        raise HTTPException(status_code=404, detail="Message not found")
+    if not EMAIL_KEY:
+        raise HTTPException(status_code=503, detail="Email integration unavailable")
+    await send_email(
+        to=msg["email"],
+        subject="MAF — Mundos Artificiais em Finanças: retorno ao seu contato",
+        html=reply_email_html(msg, input.text),
+    )
+    await db.contacts.update_one({"id": msg_id}, {"$set": {
+        "status": "replied",
+        "replied_at": datetime.now(timezone.utc).isoformat(),
+        "reply_text": input.text,
+    }})
+    return {"ok": True}
+
+
+@api_router.delete("/contact/{msg_id}")
+async def delete_contact(msg_id: str, user: dict = Depends(get_current_user)):
+    res = await db.contacts.delete_one({"id": msg_id})
+    if res.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Message not found")
+    return {"ok": True}
 
 
 @api_router.get("/admin/stats")
@@ -545,6 +661,75 @@ SEED_NEWS = [
      "date": "2026-06-20", "tag": "LAB", "featured": False, "image_url": IMG_NEURAL},
 ]
 
+SEED_TEAM = [
+    {"name": "Prof. Dr. Eber Assis Schmitz", "group": "ufrj", "order": 1,
+     "role_pt": "Professor Associado · Coordenador do Laboratório", "role_en": "Associate Professor · Lab Coordinator",
+     "institution": "UFRJ · Instituto de Matemática / PPGI",
+     "areas_pt": ["Engenharia de Software", "Modelagem e Simulação", "Análise de Risco em TI", "Economia de Software", "Mercados Artificiais"],
+     "areas_en": ["Software Engineering", "Modeling & Simulation", "IT Risk Analysis", "Software Economics", "Artificial Markets"],
+     "education": ["Doutorado em Computing and Control — Imperial College London (1980)", "Mestrado em Engenharia Elétrica — UFRJ (1973)", "Graduação em Engenharia Eletrônica — UFRGS (1971)"],
+     "bio_pt": "Doutor pelo Imperial College London e professor associado da UFRJ. Pesquisa modelagem e simulação de processos, análise de risco em projetos de TI e economia da engenharia de software. Orienta a pesquisa do Mercado Financeiro Artificial Brasileiro que dá origem ao MAF.",
+     "bio_en": "Ph.D. from Imperial College London and associate professor at UFRJ. Researches process modeling and simulation, IT project risk analysis and software engineering economics. Supervises the Brazilian Artificial Financial Market research that gave rise to MAF.",
+     "highlight_pt": "Coordenador do laboratório e orientador da tese do Mercado Financeiro Artificial Brasileiro.",
+     "highlight_en": "Lab coordinator and supervisor of the Brazilian Artificial Financial Market thesis.",
+     "lattes": "http://lattes.cnpq.br/0369165171803086", "orcid": "https://orcid.org/0000-0002-4839-4606"},
+    {"name": "Prof. Dr. Sildenir Alves Ribeiro", "group": "cefet", "order": 2,
+     "role_pt": "Professor · Bacharelado em Sistemas de Informação", "role_en": "Professor · B.Sc. Information Systems",
+     "institution": "CEFET/RJ · Campus Maria da Graça",
+     "areas_pt": ["Otimização", "Inteligência Computacional", "Engenharia de Software Experimental", "Ciência de Dados", "Governança de TI"],
+     "areas_en": ["Optimization", "Computational Intelligence", "Experimental Software Engineering", "Data Science", "IT Governance"],
+     "education": ["Pós-Doutorado em Informática — UFRJ (2018–2020)", "Doutorado em Informática — NCE/UFRJ (2018)", "Mestrado em Informática — UFES (2006)", "Graduação em Ciência da Computação — UNIC (2001)"],
+     "bio_pt": "Doutor em Informática pela UFRJ com pós-doutorado no instituto Tércio Pacitti (NCE/UFRJ). Atua em otimização, inteligência computacional e engenharia de software experimental, com publicações na IEEE Latin America Transactions e Ciência & Saúde Coletiva.",
+     "bio_en": "Ph.D. in Informatics from UFRJ with postdoctoral research at NCE/UFRJ. Works in optimization, computational intelligence and experimental software engineering, published in IEEE Latin America Transactions and Ciência & Saúde Coletiva.",
+     "highlight_pt": "Pesquisador do grupo HumânITas e orientador de mestrado no PPGI/UFRJ.",
+     "highlight_en": "HumânITas research group member and M.Sc. supervisor at PPGI/UFRJ.",
+     "lattes": "http://lattes.cnpq.br/1300978002176747"},
+    {"name": "Prof. Me. Gilberto Gil Passos", "group": "cefet", "order": 3,
+     "role_pt": "Professor · Doutorando em Informática (PPGI/UFRJ)", "role_en": "Professor · Ph.D. Candidate in Informatics (PPGI/UFRJ)",
+     "institution": "CEFET/RJ · Campus Maria da Graça",
+     "areas_pt": ["Mercados Artificiais", "Modelagem Baseada em Agentes", "Educação Financeira", "Sistemas Complexos", "Matemática Aplicada"],
+     "areas_en": ["Artificial Markets", "Agent-Based Modeling", "Financial Education", "Complex Systems", "Applied Mathematics"],
+     "education": ["Doutorado em andamento em Informática — UFRJ (desde 2022)", "Especialização em Gestão Financeira — Mackenzie (2021)", "Mestrado Profissional em Matemática — UFRJ (2015)", "Graduação em Matemática — UERJ (2012)"],
+     "bio_pt": "Fundador da OBInvest — Olimpíada Brasileira de Investimentos (2020), apoiada pelo CNPq, e membro do Fórum de Olimpíadas Científicas do MCTI. Sua tese desenvolve o Mercado Financeiro Artificial Brasileiro: ABM como ferramenta pedagógica para a OBInvest.",
+     "bio_en": "Founder of OBInvest — Brazilian Investment Olympiad (2020), supported by CNPq, and member of the MCTI Scientific Olympiads Forum. His thesis builds the Brazilian Artificial Financial Market: ABM as a teaching tool for OBInvest.",
+     "highlight_pt": "Tese: “Mercado Financeiro Artificial Brasileiro — o uso de ABM como ferramenta pedagógica para a OBInvest” (orientador: Prof. Eber Schmitz).",
+     "highlight_en": "Thesis: “The Brazilian Artificial Financial Market — ABM as a pedagogical tool for OBInvest” (supervisor: Prof. Eber Schmitz).",
+     "lattes": "http://lattes.cnpq.br/6595505865792633", "orcid": "https://orcid.org/0009-0007-5848-8298"},
+    {"name": "Prof. Me. Cristiano Fuschilo", "group": "cefet", "order": 4,
+     "role_pt": "Professor EBTT · Bacharelado em Sistemas de Informação", "role_en": "Professor · B.Sc. Information Systems",
+     "institution": "CEFET/RJ · Campus Maria da Graça",
+     "areas_pt": ["Simulação Baseada em Agentes", "Análise Envoltória de Dados (DEA)", "Seleção de Portfólios", "Assistentes Virtuais Inteligentes", "Robótica Educacional"],
+     "areas_en": ["Agent-Based Simulation", "Data Envelopment Analysis (DEA)", "Portfolio Selection", "Intelligent Virtual Assistants", "Educational Robotics"],
+     "education": ["Mestrado em Informática — UFRJ (2022)", "Especialização em Análise e Projeto de Sistemas — PUC-Rio (2003)", "Graduação em Processamento de Dados — PUC-Rio (1998)"],
+     "bio_pt": "Mestre em Informática pela UFRJ, com dissertação sobre avaliação de assistentes virtuais inteligentes via Análise Envoltória de Dados (orientação: Prof. Eber Schmitz; coorientação: Prof. Sildenir Ribeiro). Experiência de mercado financeiro na Ágora Corretora, em projetos de venda on-line de fundos de investimento.",
+     "bio_en": "M.Sc. in Informatics from UFRJ, with a dissertation on intelligent virtual assistant evaluation using Data Envelopment Analysis (advisor: Prof. Eber Schmitz; co-advisor: Prof. Sildenir Ribeiro). Financial-market industry experience at Ágora brokerage, on online mutual-fund sales projects.",
+     "highlight_pt": "Publicou simulação baseada em agentes do GeronTrack no WESAAC 2025.",
+     "highlight_en": "Published the GeronTrack agent-based simulation at WESAAC 2025.",
+     "lattes": "http://lattes.cnpq.br/1214558945534442", "orcid": "http://orcid.org/0000-0003-2050-8074"},
+    {"name": "Raphael M. Sanches de Jesus", "group": "ufrj", "order": 5,
+     "role_pt": "Pesquisador · Mestrando em Informática (PPGI/UFRJ)", "role_en": "Researcher · M.Sc. Candidate in Informatics (PPGI/UFRJ)",
+     "institution": "UFRJ / PPGI · Professor na Universidade Estácio de Sá",
+     "areas_pt": ["Engenharia de Software", "Arquiteturas Escaláveis", "Microsserviços", "Simulação Computacional", "Desenvolvimento Full-Stack"],
+     "areas_en": ["Software Engineering", "Scalable Architectures", "Microservices", "Computational Simulation", "Full-Stack Development"],
+     "education": ["Mestrado em andamento em Informática — UFRJ (orientador: Prof. Sildenir Ribeiro)", "Especialização em Desenvolvimento Java — UNESA (2014)", "Graduação em Sistemas de Informação — UNESA (2011)"],
+     "bio_pt": "Professor e pesquisador com mais de 20 anos de experiência em desenvolvimento de software, arquiteturas escaláveis e integração de APIs. Leciona programação (Java, Python, JavaScript, C++) e frameworks como React, FastAPI e Laravel.",
+     "bio_en": "Professor and researcher with 20+ years of software development experience in scalable architectures and API integration. Teaches programming (Java, Python, JavaScript, C++) and frameworks such as React, FastAPI and Laravel.",
+     "highlight_pt": "Desenvolve a infraestrutura computacional das simulações do laboratório.",
+     "highlight_en": "Builds the computational infrastructure behind the lab's simulations.",
+     "lattes": "http://lattes.cnpq.br/2882539440409307", "linkedin": "https://www.linkedin.com/in/raphael-mauricio/"},
+    {"name": "Hugo Fraga", "group": "ufrj", "order": 6,
+     "role_pt": "Pesquisador Discente · Mestrando (PPGI/UFRJ)", "role_en": "Graduate Researcher · M.Sc. Candidate (PPGI/UFRJ)",
+     "institution": "UFRJ / PPGI",
+     "areas_pt": ["Mundos Artificiais", "Modelagem Baseada em Agentes", "Finanças Computacionais"],
+     "areas_en": ["Artificial Worlds", "Agent-Based Modeling", "Computational Finance"],
+     "education": ["Mestrado em andamento em Informática — PPGI/UFRJ"],
+     "bio_pt": "Pesquisador discente do laboratório, dedicado ao desenvolvimento de micromercados artificiais e agentes cognitivos para o estudo de dinâmicas financeiras emergentes.",
+     "bio_en": "Graduate researcher at the lab, focused on building artificial micro-markets and cognitive agents to study emergent financial dynamics.",
+     "highlight_pt": "Integrante mais jovem da equipe de simulação do MAF.",
+     "highlight_en": "Youngest member of the MAF simulation team.",
+     "lattes": None},
+]
+
 
 async def seed_content():
     if await db.publications.count_documents({}) == 0:
@@ -558,10 +743,8 @@ async def seed_content():
                     {"title_pt": n["title_pt"], "image_url": {"$in": [None, ""]}},
                     {"$set": {"image_url": n["image_url"]}},
                 )
-        await db.news.update_many(
-            {"image_url": {"$exists": False}},
-            [{"$set": {"image_url": None}}],
-        )
+    if await db.team_members.count_documents({}) == 0:
+        await db.team_members.insert_many([TeamMember(**m).model_dump() for m in SEED_TEAM])
 
 
 @app.on_event("startup")

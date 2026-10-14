@@ -42,6 +42,11 @@ Criar um site completo e navegável do laboratório de pesquisa "Mundos Artifici
 - Alerta de contato por e-mail: pipeline Resend (Emergent) implementado e dormente — aguarda NOTIFY_EMAIL real da coordenação (escolha do usuário); mensagens continuam salvas no painel
 
 ## Backlog
-- P0: informar e-mail real da coordenação para ativar alertas (NOTIFY_EMAIL)
+- P0: informar e-mail real da coordenação para ativar alertas de novo contato (NOTIFY_EMAIL)
 - P1: páginas individuais de publicação com DOI/PDF; feed de notícias paginado
 - P2: exportar publicações em BibTeX completo; integração com API Lattes; SEO/OG tags
+
+## Implementado (2026-07-14 — rodada 3: painel admin completo)
+- Notícias e Publicações: toggle Publicada/Rascunho (badge + botão na lista + checkbox no formulário); rotas públicas só exibem itens publicados; rotas /api/admin/* listam tudo
+- Mensagens: responder pelo painel (e-mail real ao remetente via Resend/Emergent, template fixo com escape), status Nova/Respondida automático ao responder + toggle manual, exclusão de mensagem, histórico da resposta exibido no card
+- Equipe migrada para o MongoDB: CRUD completo no admin (criar, editar todos os campos bilíngues, excluir, publicar/ocultar, ordenar, foto por URL); site público lê de /api/team com fallback estático
