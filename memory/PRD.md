@@ -52,6 +52,8 @@ Criar um site completo e navegável do laboratório de pesquisa "Mundos Artifici
 - Fluxo: botão → auth.emergentagent.com (redirect dinâmico via window.location.origin) → callback #session_id → POST /api/auth/google → troca server-side → allowlist (só ADMIN_EMAIL entra; demais contas recebem 403) → cookies JWT httpOnly compartilhados com o login por senha
 - AuthCallback com detecção síncrona de hash + proteção contra race condition no AuthProvider
 - Verificado: session_id inválido → 401; login por senha segue funcionando; botão monta URL OAuth correta. Fluxo completo com conta Google real não testado (requer a conta)
+- ADMIN_EMAIL atualizado para fuschilo@gmail.com (Gmail real do coordenador); conta admin de teste removida do banco; login por senha validado com o novo e-mail
+- Código commitado localmente; push ao GitHub CONCLUÍDO: https://github.com/prof-fuschilo/maf-site (privado, branch main, 116 arquivos, sem .env — segredos fora do repo)
 
 ## Implementado (2026-07-14 — rodada 3: painel admin completo)
 - Notícias e Publicações: toggle Publicada/Rascunho (badge + botão na lista + checkbox no formulário); rotas públicas só exibem itens publicados; rotas /api/admin/* listam tudo
