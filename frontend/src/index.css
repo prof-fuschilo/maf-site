@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: 222 32% 4%;
+        --foreground: 210 40% 98%;
+        --card: 219 28% 8%;
+        --card-foreground: 210 40% 98%;
+        --popover: 219 28% 8%;
+        --popover-foreground: 210 40% 98%;
+        --primary: 160 84% 39%;
+        --primary-foreground: 160 90% 6%;
+        --secondary: 219 24% 13%;
+        --secondary-foreground: 210 40% 96%;
+        --muted: 219 24% 13%;
+        --muted-foreground: 215 20% 55%;
+        --accent: 160 84% 39%;
+        --accent-foreground: 160 90% 6%;
+        --destructive: 0 72% 51%;
+        --destructive-foreground: 210 40% 98%;
+        --border: 0 0% 100% / 0.08;
+        --input: 219 24% 16%;
+        --ring: 160 84% 39%;
+        --radius: 0.5rem;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-white/10;
+    }
+    html {
+        scroll-behavior: smooth;
+    }
+    body {
+        @apply text-slate-100 antialiased;
+        background-color: #07090e;
+        font-family: "Plus Jakarta Sans", -apple-system, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    ::selection {
+        background: rgba(16, 185, 129, 0.35);
+        color: #f8fafc;
+    }
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #07090e;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #1e293b;
+        border-radius: 8px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #10b981;
+    }
+}
+
+@layer base {
+    [data-debug-wrapper="true"] {
+        display: contents !important;
+    }
+}
+
+.blueprint-grid {
+    background-image:
+        linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+    background-size: 44px 44px;
+}
+
+.noise-overlay::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 60;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes marquee-drift {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+.animate-marquee {
+    animation: marquee-drift 46s linear infinite;
+}
+.animate-marquee:hover {
+    animation-play-state: paused;
+}
+
+@keyframes pulse-node {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+    50% { opacity: 0.75; box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+}
+.pulse-node {
+    animation: pulse-node 2.4s ease-in-out infinite;
+}
+
+@keyframes ticker-glow {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+}
+.ticker-dot {
+    animation: ticker-glow 1.8s ease-in-out infinite;
+}
+
+.text-stroke {
+    -webkit-text-stroke: 1px rgba(52, 211, 153, 0.4);
+    color: transparent;
+}
+
+.mask-line {
+    display: block;
+    overflow: hidden;
+}
+
+.card-glow:hover {
+    box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.35), 0 18px 50px -18px rgba(16, 185, 129, 0.22);
+}

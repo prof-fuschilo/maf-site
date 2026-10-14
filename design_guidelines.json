@@ -1,0 +1,366 @@
+{
+  "archetype": "THE_QUANTUM_ACADEMIC_AVANT_GARDE",
+  "project_name": "MAF - Laboratório Mundos Artificiais em Finanças (UFRJ / CEFET/RJ)",
+  "context_type": "hybrid_fullstack",
+  "language_support": {
+    "default": "pt",
+    "supported": ["pt", "en"],
+    "switcher_placement": "top_navigation_bar_right"
+  },
+  "typography": {
+    "pairing_strategy": "Editorial Future (Serif Display / Neo-Grotesk Mono & Sans)",
+    "font_family_recommendation": {
+      "headline_display": "'Cinzel', 'Playfair Display', 'Cormorant Garamond', serif",
+      "mono_accent": "'JetBrains Mono', 'Fira Code', 'Courier New', monospace",
+      "body_sans": "'Plus Jakarta Sans', 'IBM Plex Sans', -apple-system, sans-serif"
+    },
+    "scale_hierarchy": {
+      "hero_h1": "text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight",
+      "section_h2": "text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight",
+      "subsection_h3": "text-xl sm:text-2xl font-medium tracking-tight",
+      "card_h4": "text-lg sm:text-xl font-medium",
+      "body": "text-base leading-relaxed text-zinc-300",
+      "micro_label": "text-xs uppercase tracking-[0.25em] font-mono text-emerald-400"
+    },
+    "anti_default_rule": "NEVER use default Inter or generic sans for H1/H2 titles. Headlines must evoke rigorous scientific literature merged with computational vanguard."
+  },
+  "colors": {
+    "theme_mode": "dark",
+    "theme_description": "Obsidian Deep Space with Cybernetic Emerald / Phosphor Mint and Amber Alert kinetic accents. Reflects financial microstructures, agent simulations, and digital twin telemetry.",
+    "forbidden_colors": ["#7351B7", "#1B93A4"],
+    "palette": {
+      "background_base": "#07090E",
+      "background_surface": "#0D1117",
+      "background_card": "#111722",
+      "background_elevated": "#161F2E",
+      "border_subtle": "rgba(255, 255, 255, 0.08)",
+      "border_active": "rgba(16, 185, 129, 0.35)",
+      "primary_accent": "#10B981",
+      "primary_accent_glow": "rgba(16, 185, 129, 0.15)",
+      "secondary_accent": "#0284C7",
+      "kinetic_warning": "#F59E0B",
+      "kinetic_crash_red": "#EF4444",
+      "text_primary": "#F8FAFC",
+      "text_secondary": "#94A3B8",
+      "text_muted": "#64748B",
+      "text_mono": "#34D399"
+    },
+    "contrast_rules": "APCA & WCAG AA certified: Body text #F8FAFC and #CBD5E1 on #07090E ensures >12:1 contrast. Explicit hover text colors required on all interactive elements (e.g., hover:text-white hover:bg-emerald-600)."
+  },
+  "visual_enhancers": {
+    "canvas_simulation": "Interactive Canvas ABM Particle Network in the hero showing agents colliding, clustering, and responding to simulated liquidity shocks or market sentiment toggles.",
+    "grid_overlay": "Subtle 40px SVG blueprint grid with 3% opacity background texture (no flat digital void).",
+    "glassmorphism": "backdrop-blur-xl bg-[#07090E]/80 border border-white/10 for sticky navbar and floating telemetry panels.",
+    "badges": "Bordered monospace chips with pulsing radar dots for lab affiliations (UFRJ · PPGI · CEFET/RJ Maria da Graça)."
+  },
+  "layout_strategy": {
+    "grid_modes": {
+      "public_sections": "Mode A: Tetris Grid with asymmetric spans (col-span-8 dominant telemetry card + col-span-4 stacked agent specs).",
+      "admin_dashboard": "Mode B: High-Density Swiss Layout with strict 4-column widget ratios, quick-filter tabs, and data tables."
+    },
+    "spacing_scale": "Tailwind 2x-3x generous spacing: section padding py-24 sm:py-32, container max-w-7xl px-4 sm:px-6 lg:px-8, gap-8 to gap-12 between asymmetric bento blocks."
+  },
+  "sections_blueprint": {
+    "global_header": {
+      "element": "Header",
+      "test_id": "global-header",
+      "features": [
+        "MAF Logo with pulsing emerald simulation node",
+        "Institutional badges: UFRJ · PPGI / CEFET/RJ",
+        "Navigation links: Sobre/About, Pesquisa/Research, Equipe/Team, Publicações/Publications, Projetos/Projects, Notícias/News, Parceiros/Partners, Contato/Contact",
+        "Language Switcher (PT / EN toggle) with flag/code indicator",
+        "Admin Portal quick-access button ('Acesso Restrito' / 'Admin')"
+      ]
+    },
+    "hero_section": {
+      "element": "HeroSim",
+      "test_id": "hero-section",
+      "content": {
+        "pt": {
+          "badge": "LABORATÓRIO DE PESQUISA AVANÇADA · UFRJ / CEFET-RJ",
+          "title": "Mundos Artificiais em Finanças",
+          "subtitle": "Simulações complexas, ecossistemas multiagente (ABMS) e inteligência artificial para antecipar a emergência e o risco em mercados financeiros.",
+          "cta_primary": "Explorar Pesquisas & Modelos",
+          "cta_secondary": "Ver Corpo Docente",
+          "simulation_toggle": "Simular Choque de Liquidez"
+        },
+        "en": {
+          "badge": "ADVANCED RESEARCH LABORATORY · UFRJ / CEFET-RJ",
+          "title": "Artificial Worlds in Finance",
+          "subtitle": "Complex simulations, agent-based modeling (ABMS), and artificial intelligence engineered to uncover emergent dynamics and systemic market risk.",
+          "cta_primary": "Explore Research & Models",
+          "cta_secondary": "Meet Faculty",
+          "simulation_toggle": "Simulate Liquidity Shock"
+        }
+      },
+      "interactive_agent_canvas": "An embedded canvas rendering 150 autonomous synthetic investor agents (Fundamentalists, Chartists, Noise Traders) with dynamic price trajectory and crash/recovery states."
+    },
+    "research_pillars": {
+      "element": "ResearchPillars",
+      "test_id": "research-pillars-section",
+      "topics": [
+        {
+          "id": "abm",
+          "title_pt": "Simulações Baseadas em Agentes (ABMS)",
+          "title_en": "Agent-Based Modeling & Simulation",
+          "desc_pt": "Micromundos com milhares de agentes cognitivos autônomos para modelar book de ofertas, liquidez endógena e dinâmica de flash crashes.",
+          "desc_en": "Microscopic synthetic markets with thousands of autonomous cognitive agents modeling limit order books, endogenous liquidity, and flash crashes."
+        },
+        {
+          "id": "digital_twins",
+          "title_pt": "Gêmeos Digitais Financeiros",
+          "title_en": "Financial Digital Twins",
+          "desc_pt": "Réplicas virtuais de alta fidelidade para testar estresse de fluxos de caixa, choques macroeconômicos e estabilidade sistêmica bancária.",
+          "desc_en": "High-fidelity virtual replicas designed to stress-test corporate cash flows, macroeconomic perturbations, and interbank systemic resilience."
+        },
+        {
+          "id": "behavioral_ai",
+          "title_pt": "Finanças Comportamentais & IA",
+          "title_en": "Behavioral Finance & Adaptive AI",
+          "desc_pt": "Redes neurais e aprendizado por reforço simulando viés de aversão à perda, histeria de contágio e formação de bolhas especulativas.",
+          "desc_en": "Deep reinforcement learning agents reproducing cognitive heuristics, herd behavior, panic contagions, and speculative asset bubbles."
+        },
+        {
+          "id": "odd_protocol",
+          "title_pt": "Protocolo ODD Científico",
+          "title_en": "Scientific ODD Protocol",
+          "desc_pt": "Padronização metodológica internacional (Overview, Design concepts, Details) assegurando reprodutibilidade matemática rigorosa.",
+          "desc_en": "Standardized international methodological framework (Overview, Design concepts, Details) guaranteeing rigorous simulation reproducibility."
+        },
+        {
+          "id": "computational_simulation",
+          "title_pt": "Simulação Computacional de Alta Performance",
+          "title_en": "High-Performance Financial Computing",
+          "desc_pt": "Modelagem em escala paralela com integração a dados de alta frequência e cenários de política monetária.",
+          "desc_en": "Massively parallel simulation pipelines integrated with tick-level market microstructure data and monetary policy scenarios."
+        }
+      ]
+    },
+    "team_section": {
+      "element": "TeamSection",
+      "test_id": "team-section",
+      "structure": "Grid of 6 researchers (5 professors + 1 master's researcher) with interactive modal/drawer showing comprehensive academic background, Lattes CV, research interests, and top publications.",
+      "members": [
+        {
+          "id": "eduardo-bezerra",
+          "name": "Prof. Dr. Eduardo Bezerra",
+          "role_pt": "Professor Permanente & Pesquisador Principal",
+          "role_en": "Tenured Professor & Principal Investigator",
+          "institution": "CEFET/RJ (Maria da Graça) & PPGI/UFRJ",
+          "areas": ["Inteligência Artificial", "Reinforcement Learning", "Modelagem Baseada em Agentes", "Mercados Artificiais"],
+          "lattes_url": "http://lattes.cnpq.br/",
+          "bio_pt": "Doutor em Engenharia de Sistemas e Computação (COPPE/UFRJ). Especialista em aprendizado de máquina e simulação de agentes autônomos em ambientes econômicos competitivos.",
+          "bio_en": "Ph.D. in Systems Engineering and Computer Science (COPPE/UFRJ). Expert in machine learning and autonomous agent simulations in competitive economic environments."
+        },
+        {
+          "id": "rafaela-brum",
+          "name": "Profa. Dra. Rafaela Brum",
+          "role_pt": "Professora Associada & Pesquisadora em Finanças Quantitativas",
+          "role_en": "Associate Professor & Quantitative Finance Lead",
+          "institution": "CEFET/RJ & PPGI",
+          "areas": ["Finanças Comportamentais", "Gêmeos Digitais", "Simulação de Risco Sistêmico", "Mercados Complexos"],
+          "lattes_url": "http://lattes.cnpq.br/",
+          "bio_pt": "Doutora com vasta atuação na modelagem de Digital Twins financeiros e arquitetura de agentes para previsão de liquidez sob choques extremos.",
+          "bio_en": "Ph.D. with recognized work on financial digital twins and behavioral agent architectures forecasting liquidity stress under extreme tail risk."
+        },
+        {
+          "id": "marcos-marques",
+          "name": "Prof. Dr. Marcos Marques",
+          "role_pt": "Professor Pesquisador em Métodos Computacionais",
+          "role_en": "Research Professor in Computational Methods",
+          "institution": "CEFET/RJ (Bacharelado Sistemas de Informação)",
+          "areas": ["Sistemas de Informação", "Protocolo ODD", "Engenharia de Software para Simulação"],
+          "lattes_url": "http://lattes.cnpq.br/",
+          "bio_pt": "Foco em arquiteturas distribuídas para simulações financeiras de larga escala e validação de modelos pelo protocolo científico ODD.",
+          "bio_en": "Specializes in scalable distributed simulation architectures and formal model validation via the international ODD scientific protocol."
+        },
+        {
+          "id": "alexandre-vasconcelos",
+          "name": "Prof. Dr. Alexandre Vasconcelos",
+          "role_pt": "Professor Pesquisador & Especialista em Séries Temporais",
+          "role_en": "Research Professor & Time Series Specialist",
+          "institution": "UFRJ / PPGI",
+          "areas": ["Microestrutura de Mercado", "Deep Learning Financeiro", "Análise de Sentimento"],
+          "lattes_url": "http://lattes.cnpq.br/",
+          "bio_pt": "Pesquisador no PPGI/UFRJ investigando a transição de regimes de volatilidade e redes neurais recorrentes aplicadas à microestrutura de negociação.",
+          "bio_en": "Researcher at PPGI/UFRJ investigating volatility regime switching and recurrent neural networks applied to high-frequency order books."
+        },
+        {
+          "id": "camila-almeida",
+          "name": "Profa. Dra. Camila Almeida",
+          "role_pt": "Professora Pesquisadora em Regulação e Mercados de Capitais",
+          "role_en": "Research Professor in Regulation & Capital Markets",
+          "institution": "UFRJ / CEFET/RJ",
+          "areas": ["Regulação Financeira", "Simulação de Políticas Regulatórias", "Prevenção a Crashes"],
+          "lattes_url": "http://lattes.cnpq.br/",
+          "bio_pt": "Atua na interface entre regulação prudencial do Banco Central/CVM e ambientes de teste em sandbox baseados em simulações sintéticas de mercado.",
+          "bio_en": "Works at the frontier of regulatory policy stress testing (CVM/Central Bank) utilizing synthetic financial sandboxes and agent populations."
+        },
+        {
+          "id": "gabriel-santos",
+          "name": "Gabriel Santos, M.Sc. Candidate",
+          "role_pt": "Pesquisador Discente (Mestrado PPGI/UFRJ)",
+          "role_en": "Graduate Researcher (M.Sc. Candidate PPGI/UFRJ)",
+          "institution": "PPGI/UFRJ & BSI CEFET/RJ",
+          "areas": ["Multi-Agent Reinforcement Learning", "Flash Crashes", "LLMs em Finanças"],
+          "lattes_url": "http://lattes.cnpq.br/",
+          "bio_pt": "Desenvolve dissertação focada em agentes dotados de modelos de linguagem para replicação de cascatas informacionais e contágio no mercado acionário brasileiro.",
+          "bio_en": "Conducting master's research on LLM-driven agents mimicking information cascades and panic contagion in the Brazilian equities market."
+        }
+      ]
+    },
+    "publications_section": {
+      "element": "PublicationsDirectory",
+      "test_id": "publications-section",
+      "features": [
+        "Dynamic filter by Year, Author, Topic tag (ABMS, Digital Twins, Behavioral AI, ODD)",
+        "Search input with instant debounced filtering",
+        "Direct PDF download / DOI external links",
+        "Citation modal (BibTeX & ABNT copy buttons)",
+        "Backend synced data with MongoDB CRUD"
+      ]
+    },
+    "projects_section": {
+      "element": "ResearchProjects",
+      "test_id": "projects-section",
+      "structure": "Asymmetric Bento Cards with funding bodies (FAPERJ, CNPq, LIFT/Banco Central, LAB CVM) and milestones"
+    },
+    "news_section": {
+      "element": "NewsSection",
+      "test_id": "news-section",
+      "structure": "Editorial grid with featured flagship article + recent briefings, managed dynamically from the admin panel."
+    },
+    "partners_section": {
+      "element": "EcosystemPartners",
+      "test_id": "partners-section",
+      "marquee_ribbon": "Continuous slow drifting kinetic ticker showcasing ecosystem alliances",
+      "partners": [
+        {"name": "LAMFO - UnB", "desc": "Laboratório de Aprendizado de Máquina em Finanças e Organizações", "url": "https://lamfo.unb.br/"},
+        {"name": "LIFT Lab", "desc": "Laboratório de Inovações Financeiras e Tecnológicas (Banco Central do Brasil)", "url": "https://liftlab.com.br/"},
+        {"name": "LAB - CVM / ABDE / BID", "desc": "Laboratório de Inovação Financeira", "url": "https://www.labinovacaofinanceira.com/"},
+        {"name": "Quantum PUC-IA Lab", "desc": "Laboratório de Inteligência Artificial e Finanças PUC-Rio", "url": "https://www.puc-rio.br/"},
+        {"name": "IAG PUC-Rio", "desc": "Escola de Negócios da PUC-Rio", "url": "https://www.iag.puc-rio.br/"},
+        {"name": "LAFIM UFRJ", "desc": "Laboratório de Métodos Quantitativos em Finanças de Mercado da COPPE/Poli", "url": "https://poli.ufrj.br/"}
+      ]
+    },
+    "contact_section": {
+      "element": "ContactSection",
+      "test_id": "contact-section",
+      "details": {
+        "institutions": [
+          {
+            "name": "PPGI / UFRJ - Programa de Pós-Graduação em Informática",
+            "campus": "Centro de Tecnologia, Bloco C, Cidade Universitária, Rio de Janeiro - RJ",
+            "url": "https://www.ppgi.ufrj.br/"
+          },
+          {
+            "name": "CEFET/RJ - Campus Maria da Graça",
+            "campus": "Rua Miguel Ângelo, 96, Maria da Graça, Rio de Janeiro - RJ (Bacharelado em Sistemas de Informação)",
+            "url": "https://www.cefet-rj.br/"
+          }
+        ],
+        "form_fields": ["name", "email", "subject", "message", "category (Pesquisa, Parceria, Ingresso PPGI)"],
+        "submit_button_test_id": "contact-submit-button"
+      }
+    },
+    "admin_dashboard": {
+      "element": "AdminDashboard",
+      "test_id": "admin-dashboard",
+      "route": "/admin",
+      "auth": "Simple token/credential modal or route (admin / admin123)",
+      "management_tabs": [
+        {
+          "tab_id": "news_tab",
+          "label": "Gerenciar Notícias (News)",
+          "actions": ["Create new article", "Edit title/summary/date/tags", "Delete", "Toggle Featured"]
+        },
+        {
+          "tab_id": "publications_tab",
+          "label": "Gerenciar Publicações (Publications)",
+          "actions": ["Add paper", "Edit authors/year/journal/doi/pdf", "Delete"]
+        },
+        {
+          "tab_id": "telemetry_tab",
+          "label": "Telemetria do Sistema",
+          "actions": ["View database counts", "Trigger simulated seed data refresh"]
+        }
+      ]
+    }
+  },
+  "curated_image_urls": {
+    "hero_simulation_backdrop": {
+      "url": "https://images.unsplash.com/photo-1644088379091-d574269d422f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzV8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGRhdGElMjB2aXN1YWxpemF0aW9uJTIwZmluYW5jaWFsJTIwbmV0d29yayUyMGRhcmt8ZW58MHx8fHwxNzkxOTkyODAxfDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Abstract blue data mesh representing artificial agent clusters in financial markets",
+      "placement": "Hero background canvas overlay"
+    },
+    "order_book_microstructure": {
+      "url": "https://images.unsplash.com/photo-1689732888407-310424e3a372?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzV8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMGRhdGElMjB2aXN1YWxpemF0aW9uJTIwZmluYW5jaWFsJTIwbmV0d29yayUyMGRhcmt8ZW58MHx8fHwxNzkxOTkyODAxfDA&ixlib=rb-4.1.0&q=85",
+      "alt": "High-frequency candlestick order book dynamics and volatility regime shifts",
+      "placement": "Agent-Based Modeling research card & Projects section"
+    },
+    "digital_twin_neural_mesh": {
+      "url": "https://images.unsplash.com/photo-1674027444485-cec3da58eef4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA3MDB8MHwxfHNlYXJjaHwxfHxhcnRpZmljaWFsJTIwaW50ZWxsaWdlbmNlJTIwZGFyayUyMG1lc2glMjBuZXR3b3JrfGVufDB8fHx8MTc4NjEyMDY5MHww&ixlib=rb-4.1.0&q=85",
+      "alt": "Generative neural sphere simulating systemic risk contagion across financial nodes",
+      "placement": "Digital Twins & Behavioral Finance feature container"
+    },
+    "researcher_academic_portrait_1": {
+      "url": "https://images.unsplash.com/photo-1610611742876-97e4d834d077?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHwyfHxyZXNlYXJjaGVyJTIwc2NpZW50aXN0JTIwdGhpbmtpbmclMjBwb3J0cmFpdHxlbnwwfHx8fDE3OTE5OTI4MjF8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "Academic scientist thinking in monochrome",
+      "placement": "Faculty Profile placeholder fallback"
+    },
+    "researcher_academic_portrait_2": {
+      "url": "https://images.unsplash.com/photo-1544280124-2f0a80ccee73?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHwzfHxyZXNlYXJjaGVyJTIwc2NpZW50aXN0JTIwdGhpbmtpbmclMjBwb3J0cmFpdHxlbnwwfHx8fDE3OTE5OTI4MjF8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "Quantitative researcher observing digital simulation outputs",
+      "placement": "Team profile card detail"
+    }
+  },
+  "motion_and_interaction": {
+    "smooth_transitions": "transition-colors duration-200, transition-transform duration-200",
+    "banned": "No transition: all (prevents jank and transform breaks)",
+    "micro_interactions": [
+      "Agent network simulation reacts to mouse move with subtle repelling forces",
+      "Research pillar cards elevate by -4px on hover with emerald-tinted inner glow",
+      "Language switcher transitions all labels smoothly with fade-in opacity",
+      "Copy BibTeX trigger presents sonner toast with green notification badge"
+    ]
+  },
+  "testing_attributes": {
+    "protocol": "All interactive elements and data cards must contain kebab-case role-based data-testid attributes",
+    "required_test_ids": [
+      "global-header",
+      "language-switcher-pt",
+      "language-switcher-en",
+      "nav-research-link",
+      "nav-team-link",
+      "nav-publications-link",
+      "nav-projects-link",
+      "nav-news-link",
+      "nav-partners-link",
+      "nav-contact-link",
+      "nav-admin-link",
+      "hero-simulation-canvas",
+      "hero-shock-button",
+      "team-member-card-eduardo-bezerra",
+      "team-modal-trigger",
+      "publication-search-input",
+      "publication-filter-abms",
+      "publication-item-card",
+      "citation-copy-bibtex-button",
+      "contact-name-input",
+      "contact-email-input",
+      "contact-submit-button",
+      "admin-login-button",
+      "admin-add-news-button",
+      "admin-save-publication-button"
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Implement the React frontend in JavaScript (.js / .jsx), strictly respecting pre-configured Shadcn components and Tailwind CSS.",
+    "Deliver a genuine bilingual experience (PT-BR and EN) with an active context state switchable anytime from the top bar.",
+    "Build a custom HTML5 canvas agent simulation in the Hero with interactive controls (e.g. 'Shock Market / Choque de Liquidez') illustrating ABMS.",
+    "Incorporate real faculty profiles from UFRJ PPGI and CEFET/RJ Maria da Graça with education, research focus, Lattes CV buttons, and publication modals.",
+    "Integrate FastAPI MongoDB backend for Publications, News, and Contact inquiries with full CRUD for the Admin dashboard.",
+    "Use Sonner for toasts upon actions like citation copying, feedback messages, and news updates.",
+    "Ensure contrast standards are met across all dark surfaces (no muddy low-contrast grey on black)."
+  ]
+}
