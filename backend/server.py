@@ -61,11 +61,15 @@ def create_refresh_token(user_id: str) -> str:
     return jwt.encode(payload, get_jwt_secret(), algorithm=JWT_ALGORITHM)
 
 
+COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "true").lower() == "true"
+COOKIE_SAMESITE = "none" if COOKIE_SECURE else "lax"
+
+
 def set_auth_cookies(response: Response, access: str, refresh: str):
-    response.set_cookie("access_token", access, httponly=True, secure=True,
-                        samesite="none", max_age=3600, path="/")
-    response.set_cookie("refresh_token", refresh, httponly=True, secure=True,
-                        samesite="none", max_age=604800, path="/")
+    response.set_cookie("access_token", access, httponly=True, secure=COOKIE_SECURE,
+                        samesite=COOKIE_SAMESITE, max_age=3600, path="/")
+    response.set_cookie("refresh_token", refresh, httponly=True, secure=COOKIE_SECURE,
+                        samesite=COOKIE_SAMESITE, max_age=604800, path="/")
 
 
 async def get_current_user(request: Request) -> dict:
@@ -336,7 +340,7 @@ async def refresh(request: Request, response: Response):
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
     response.set_cookie("access_token", create_access_token(user["id"], user["email"]),
-                        httponly=True, secure=True, samesite="none", max_age=3600, path="/")
+                        httponly=True, secure=COOKIE_SECURE, samesite=COOKIE_SAMESITE, max_age=3600, path="/")
     return user
 
 
